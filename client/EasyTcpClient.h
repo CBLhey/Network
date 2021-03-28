@@ -20,6 +20,7 @@
 
 class EasyTcpClient
 {
+public:
 	SOCKET _sock;
 public:
 	EasyTcpClient();

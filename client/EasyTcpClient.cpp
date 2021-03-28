@@ -42,13 +42,13 @@ int EasyTcpClient::connectSocket(const char * ip, unsigned short port)
 #else
 	_sin.sin_addr.s_addr = inet_addr(ip);
 #endif
-	printf("正在链接服务器...\n");
+	printf("正在链接服务器<socket=%d>...\n", _sock);
 	int ret = connect(_sock, (sockaddr *)&_sin, sizeof(sockaddr_in));
 	if (ret == INVALID_SOCKET) {
 		printf("<socket=%d>selecct任务结束。\n", _sock);
 	}
 	else {
-		printf("链接服务器成功...\n");
+		printf("链接服务器成功<socket=%d>...\n", _sock);
 	}
 	
 	return ret;
@@ -103,7 +103,7 @@ int EasyTcpClient::recvData()
 	char msgBuf[1024];
 	int nLen = recv(_sock, (char*)&msgBuf, sizeof(DataHeader), 0);
 	if (nLen < 0) {
-		printf("与服务器断开链接， 任务结束...\n");
+		printf("与服务器断开链接， 任务结束<socket=%d>...\n", _sock);
 		return -1;
 	}
 	DataHeader *dh = (DataHeader *)msgBuf;
@@ -118,21 +118,21 @@ void EasyTcpClient::onNetMsg(DataHeader *dh, char* msgBuf, int len) {
 	switch (dh->cmd) {
 		case CMD_LOGIN_RESULT: {
 			LoginResult *loginResult = (LoginResult *)msgBuf;
-			printf("登入返回:%d\n", loginResult->result);
+			printf("<socket=%d>登入返回:%d...\n", _sock, loginResult->result);
 		}
 		break;
 		case CMD_LOGINOUT_RESULT: {
 			LogoutResult *logoutResult = (LogoutResult *)msgBuf;
-			printf("登出返回:%d\n", logoutResult->result);
+			printf("<socket=%d>登出返回:%d...\n", _sock, logoutResult->result);
 		}
 		break;
 		case CMD_NEW_UUSE_JOIN: {
 			NewUserJoin *userJoin = (NewUserJoin *)msgBuf;
-			printf("新客户端<Sock=%d>加入链接\n", userJoin->socketID);
+			printf("<socket=%d>收到新客户端加入...\n", _sock);
 		}
 		break;
 		default: {
-			printf("未知协议..\n");
+			printf("<socket=%d>收到未知协议...\n", _sock);
 		}
 		 break;
 	}
